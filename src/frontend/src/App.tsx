@@ -5,18 +5,25 @@ import Sidebar from "./components/Sidebar";
 import AIHIRatioArchitect from "./components/modules/AIHIRatioArchitect";
 import CurriculumATS from "./components/modules/CurriculumATS";
 import RealityCheckMarketplace from "./components/modules/RealityCheckMarketplace";
+import HomePage from "./pages/HomePage";
+import LevelGatePage from "./pages/LevelGatePage";
 
-export type Module = "curriculumATS" | "aiHIRatio" | "marketplace";
+export type View =
+  | "home"
+  | "levelGate"
+  | "curriculumATS"
+  | "aiHIRatio"
+  | "marketplace";
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState<Module>("curriculumATS");
+  const [view, setView] = useState<View>("home");
 
   return (
     <div
       className="flex h-screen overflow-hidden"
       style={{ background: "#000000" }}
     >
-      <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
+      <Sidebar view={view} setView={setView} />
 
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
@@ -24,13 +31,15 @@ export default function App() {
         <main
           className="flex-1 overflow-y-auto"
           style={{
-            padding: "28px 28px 80px",
+            padding: view === "home" ? "0" : "28px 28px 80px",
             background: "#000000",
           }}
         >
-          {activeModule === "curriculumATS" && <CurriculumATS />}
-          {activeModule === "aiHIRatio" && <AIHIRatioArchitect />}
-          {activeModule === "marketplace" && <RealityCheckMarketplace />}
+          {view === "home" && <HomePage onNavigate={setView} />}
+          {view === "levelGate" && <LevelGatePage onNavigate={setView} />}
+          {view === "curriculumATS" && <CurriculumATS />}
+          {view === "aiHIRatio" && <AIHIRatioArchitect />}
+          {view === "marketplace" && <RealityCheckMarketplace />}
         </main>
 
         {/* Footer */}

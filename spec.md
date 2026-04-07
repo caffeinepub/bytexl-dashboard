@@ -1,35 +1,48 @@
-# SYNTRA — AI EdTech Web App
+# SYNTRA – Homepage Redesign + Feature Pages
 
 ## Current State
-This is a new project being built from scratch. No existing frontend or backend modules.
+- App has a sidebar + header layout. On load, it shows the CurriculumATS module directly.
+- Sidebar has Level-3/2/1/0 navigation buttons for the 3 modules.
+- Header has AI news ticker and "Get in Touch" button.
+- 3 modules exist: CurriculumATS, AIHIRatioArchitect, RealityCheckMarketplace.
+- No landing/homepage exists — app starts directly at the module view.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Full SYNTRA app with Cyber-Luxury Dark Mode theme (Pure Black #000000 background)
-- Persistent Level-Gate Sidebar (vertical roadmap: Level-3 bottom → Level-0 top with locked gold-green gradient animation)
-- Minimalist Header: SYNTRA logo left, Live AI News Ticker center (scrolling: Meta, OpenAI, Nvidia news), "Get in Touch" button right with pulsating glow
-- Module 1: Curriculum ATS — 2-column hero (Left: headline + tagline, Right: Branch dropdown CSE/AIML + PDF upload). Result: circular progress gauge (Industry Alignment %), Conflict List (College X vs Industry Y)
-- Module 2: AI-HI Ratio Architect — Central prompt box "Describe your Project Idea", Brain-Sync loading animation, Split-screen IDE result (Left: Tech Stack, Right: AI/HI ratio progress bars with HI zones in Amber Yellow #FFBF00)
-- Module 3: Reality Check Marketplace — Grid of Job Role Cards (SDE-1, AI Engineer, Data Scientist, ML Engineer, Full Stack, DevOps). Each card: Live Salary ₹LPA + Verification Score %. "Talk to a Real Job-Doer" button opens payment/chat modal
-- Salary Area Charts for each role
-- Glassmorphism: all cards with 1px #ffffff10 border, 10px backdrop-blur
-- Electric Spring Green (#00FF88) as primary accent with 20px outer glow
-- Buttons: rounded-full, high-gloss, #00FF88 text on black, 2px green borders
-- Smooth fade-in transitions between modules (CSS keyframes)
-- Backend: store curriculum analysis results, job role data, contact inquiries
+1. **Homepage (Landing Page)** — New `HomePage` component shown on first load (view = "home"):
+   - Hero section: SYNTRA logo/name, tagline text, short description.
+   - **Feature Circles row**: 3 large clickable circular buttons, one per module. Each circle shows the feature icon + name. Clicking navigates to the respective module page.
+   - **AI News Section**: Grid of company "news blocks". Each block has:
+     - A square button/label at top showing the company name (e.g. "Meta", "OpenAI", "Nvidia", "Google", "Microsoft", "Anthropic").
+     - Below it a 4×4 square news card showing the latest AI news/research for that company, cycling/auto-updating every few seconds to simulate live updates.
+   - All module navigations from homepage go to their respective dedicated pages.
+
+2. **Level-Gate Page** (`LevelGatePage`) — Dedicated page explaining how Level -3 to Level 0 works:
+   - Full explainer of the 4 levels: Level-3 (Foundations/Curriculum ATS), Level-2 (Builder/AI-HI Ratio Architect), Level-1 (Market Reality/Marketplace), Level-0 (Locked/Apex).
+   - Visual timeline/roadmap with each level's purpose, what user learns, and how to unlock next level.
+   - CTA button linking to start at Level-3.
+
+3. **Curriculum ATS Page** (expanded `CurriculumATSPage`) — Existing CurriculumATS module PLUS:
+   - Career Decision Prompt Box: textarea where user enters their career goal/confusion and gets AI guidance.
+   - Salary Section: show current real-world salary data aligned by job role (reuse data from RealityCheckMarketplace).
+   - Multiple Profile Creator: Like Instagram account switcher — user can create/switch between multiple profiles (stored in React state). Each profile has a name, branch, and career focus.
+   - Industry Expert Profiles: A row of expert profile cards per job role. Each expert has name, current role, company, and a "Ask Expert" button that opens a contact/request modal.
+   - College Resume Builder: a simple template with fields (name, skills, projects, target role) that generates a formatted resume preview.
+
+4. **Routing system**: Add a `view` state to App.tsx with values: `"home"` | `"levelGate"` | `"curriculumATS"` | `"aiHIRatio"` | `"marketplace"`. Update Sidebar to show a "Home" button at top. Update module navigation to set the view state.
 
 ### Modify
-- Nothing (new project)
+- `App.tsx`: Add `view` state, show `HomePage` when view is `"home"`, show `LevelGatePage` when view is `"levelGate"`, keep existing modules for other views.
+- `Sidebar.tsx`: Add a Home icon button at the top that goes to `view = "home"`. The existing Level-3/2/1/0 entries can also set view to the relevant module (same as before), plus add a "Level Gate Info" link to `"levelGate"` view.
+- `Header.tsx`: Keep as-is.
 
 ### Remove
-- Nothing (new project)
+- Nothing removed. Existing modules preserved fully.
 
 ## Implementation Plan
-1. Backend: Motoko canister with data types for curriculum analysis results, job roles, contact inquiries, and chat requests
-2. Frontend: Single-page app with sidebar navigation and 3 module views
-3. Header with ticker animation and pulsating CTA button
-4. Module 1: Branch selector + file upload simulation + circular gauge animation + conflict table
-5. Module 2: Prompt input + brain-sync animation + IDE split-screen with progress bars
-6. Module 3: Job card grid + salary area charts + modal for Job-Doer contact
-7. CSS: OKLCH tokens, glassmorphism utilities, glow effects, fade-in keyframes
+1. Create `src/frontend/src/pages/HomePage.tsx` — landing page with hero, feature circles, and AI news blocks.
+2. Create `src/frontend/src/pages/LevelGatePage.tsx` — level roadmap explainer.
+3. Expand `src/frontend/src/components/modules/CurriculumATS.tsx` into a full page with career prompt, salary section, multi-profile creator, industry experts, and resume builder.
+4. Update `src/frontend/src/App.tsx` to use `view` state and render the right page.
+5. Update `src/frontend/src/components/Sidebar.tsx` to add Home button and LevelGate link.

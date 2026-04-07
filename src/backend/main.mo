@@ -1,8 +1,8 @@
 import Map "mo:core/Map";
 import List "mo:core/List";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   // Job Roles Data
   type JobRole = {

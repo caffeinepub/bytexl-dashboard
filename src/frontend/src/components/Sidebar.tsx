@@ -1,10 +1,9 @@
 import React from "react";
-
-type Module = "curriculumATS" | "aiHIRatio" | "marketplace";
+import type { View } from "../App";
 
 interface SidebarProps {
-  activeModule: Module;
-  setActiveModule: (m: Module) => void;
+  view: View;
+  setView: (v: View) => void;
 }
 
 const levels = [
@@ -12,43 +11,40 @@ const levels = [
     id: 0,
     label: "LOCKED",
     sublabel: "Apex Tier",
-    module: null as Module | null,
+    module: null as View | null,
     locked: true,
   },
   {
     id: 1,
     label: "Level-1",
     sublabel: "Market Reality",
-    module: "marketplace" as Module,
+    module: "marketplace" as View,
     locked: false,
   },
   {
     id: 2,
     label: "Level-2",
     sublabel: "Builder",
-    module: "aiHIRatio" as Module,
+    module: "aiHIRatio" as View,
     locked: false,
   },
   {
     id: 3,
     label: "Level-3",
     sublabel: "Foundations",
-    module: "curriculumATS" as Module,
+    module: "curriculumATS" as View,
     locked: false,
   },
 ];
 
-const moduleToLevel: Record<Module, number> = {
+const viewToLevel: Partial<Record<View, number>> = {
   curriculumATS: 3,
   aiHIRatio: 2,
   marketplace: 1,
 };
 
-export default function Sidebar({
-  activeModule,
-  setActiveModule,
-}: SidebarProps) {
-  const activeLevel = moduleToLevel[activeModule];
+export default function Sidebar({ view, setView }: SidebarProps) {
+  const activeLevel = viewToLevel[view] ?? -1;
 
   return (
     <aside
@@ -112,8 +108,102 @@ export default function Sidebar({
         }}
       />
 
+      {/* Home + Level Guide buttons */}
+      <div className="px-4 pt-4 pb-2 flex flex-col gap-1">
+        <button
+          type="button"
+          onClick={() => setView("home")}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 text-left w-full"
+          style={{
+            background: view === "home" ? "rgba(0,255,136,0.1)" : "transparent",
+            border:
+              view === "home"
+                ? "1px solid rgba(0,255,136,0.2)"
+                : "1px solid transparent",
+            color: view === "home" ? "#00FF88" : "#9AA6A0",
+          }}
+          data-ocid="sidebar.link"
+          aria-label="Go to Home"
+        >
+          <svg
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+          <span
+            style={{
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: view === "home" ? 700 : 500,
+            }}
+          >
+            Home
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setView("levelGate")}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 text-left w-full"
+          style={{
+            background:
+              view === "levelGate" ? "rgba(0,255,136,0.1)" : "transparent",
+            border:
+              view === "levelGate"
+                ? "1px solid rgba(0,255,136,0.2)"
+                : "1px solid transparent",
+            color: view === "levelGate" ? "#00FF88" : "#9AA6A0",
+          }}
+          data-ocid="sidebar.link"
+          aria-label="How Levels Work"
+        >
+          <svg
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+            />
+          </svg>
+          <span
+            style={{
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: view === "levelGate" ? 700 : 500,
+            }}
+          >
+            Level Guide
+          </span>
+        </button>
+      </div>
+
+      {/* Divider */}
+      <div
+        style={{
+          height: 1,
+          background: "rgba(255,255,255,0.04)",
+          margin: "0 16px 4px",
+        }}
+      />
+
       {/* Cyber Roadmap label */}
-      <div className="px-5 pt-5 pb-3">
+      <div className="px-5 pt-3 pb-3">
         <span
           style={{
             fontSize: 10,
@@ -130,7 +220,7 @@ export default function Sidebar({
       {/* Level timeline */}
       <div className="flex flex-col px-5 flex-1" style={{ gap: 0 }}>
         {levels.map((level, idx) => {
-          const isActive = level.module === activeModule;
+          const isActive = level.module === view;
           const isLocked = level.locked;
 
           return (
@@ -197,9 +287,7 @@ export default function Sidebar({
                       zIndex: 1,
                       padding: 0,
                     }}
-                    onClick={() =>
-                      level.module && setActiveModule(level.module)
-                    }
+                    onClick={() => level.module && setView(level.module)}
                   />
                 )}
                 {/* Bottom connector */}
@@ -228,7 +316,7 @@ export default function Sidebar({
                   padding: "0 0 0 12px",
                 }}
                 onClick={() =>
-                  !isLocked && level.module && setActiveModule(level.module)
+                  !isLocked && level.module && setView(level.module)
                 }
                 disabled={isLocked}
                 aria-label={
@@ -311,59 +399,6 @@ export default function Sidebar({
         }}
         className="flex items-center gap-4"
       >
-        <button
-          type="button"
-          className="transition-all duration-200 rounded-lg p-2"
-          style={{ color: "#9AA6A0" }}
-          title="Home"
-          aria-label="Home"
-          data-ocid="sidebar.link"
-        >
-          <svg
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-            />
-          </svg>
-        </button>
-        <button
-          type="button"
-          className="transition-all duration-200 rounded-lg p-2"
-          style={{ color: "#9AA6A0" }}
-          title="Settings"
-          aria-label="Settings"
-          data-ocid="sidebar.link"
-        >
-          <svg
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-        </button>
         <div style={{ fontSize: 10, color: "#555", marginLeft: "auto" }}>
           v2.0
         </div>
